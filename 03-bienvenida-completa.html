@@ -485,12 +485,16 @@ function track(ev,extra){
     segundosEnPagina:Math.round((Date.now()-_t0)/1000), scrollMax:_scrollMax+'%', numVisitas:_visitas,
     ...(extra||{})
   };
-  // IP + geo aproximada (best-effort desde el navegador, solo demo). En prod lo añade el CRM.
+  // Aviso real al CRM (Telegram) SOLO para eventos relevantes. sendBeacon manda
+  // text/plain (sin preflight CORS) y es fire-and-forget. El token del bot vive
+  // en el servidor; aquí nunca se expone. Se envía tras resolver la geo-IP.
+  const AVISO=new Set(['feedback','solicitar_auditoria','quiero_tarjeta_50']);
+  const avisar=()=>{ if(!AVISO.has(ev))return; try{ navigator.sendBeacon('https://crm.soulia.info/api/bienvenida/evento', new Blob([JSON.stringify(p)],{type:'text/plain'})); }catch(_e){} };
+  // IP + geo aproximada (best-effort desde el navegador).
   fetch('https://ipapi.co/json/').then(r=>r.json()).then(g=>{
     p.ip=g.ip; p.ciudad=g.city; p.region=g.region; p.pais=g.country_name; p.cp=g.postal; p.isp=g.org; p.lat=g.latitude; p.lon=g.longitude;
-    console.log('%c[Soul IA · track] '+ev,'color:#fb923c;font-weight:700',p);
-  }).catch(()=>{console.log('%c[Soul IA · track] '+ev+' (sin geo-IP)','color:#fb923c;font-weight:700',p);});
-  // TODO producción: navigator.sendBeacon('https://crm.../api/eventos', JSON.stringify(p));
+    console.log('%c[Soul IA · track] '+ev,'color:#fb923c;font-weight:700',p); avisar();
+  }).catch(()=>{console.log('%c[Soul IA · track] '+ev+' (sin geo-IP)','color:#fb923c;font-weight:700',p); avisar();});
   return p;
 }
 window.__clientReady.then(()=>track('visita'));
