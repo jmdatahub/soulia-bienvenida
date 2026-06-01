@@ -151,7 +151,7 @@
   @media (prefers-reduced-motion: reduce){.perkwrap.show .perk{animation:none}}
   /* Clippy (Office 97): sale del RINCÓN inferior-derecho, inclinado 45°, recortado por el cuadro */
   .perk{position:relative;overflow:hidden}
-  .clippy{position:absolute;right:-8px;bottom:-8px;width:65px;z-index:6;cursor:pointer;opacity:0;transform:translate(58px,58px) rotate(-28deg);transform-origin:bottom right;transition:opacity .4s ease,transform .8s cubic-bezier(.34,1.56,.64,1);filter:drop-shadow(-2px -2px 5px rgba(0,0,0,.35))}
+  .clippy{position:absolute;right:-8px;bottom:-8px;width:59px;z-index:6;cursor:pointer;opacity:0;transform:translate(58px,58px) rotate(-28deg);transform-origin:bottom right;transition:opacity .4s ease,transform .8s cubic-bezier(.34,1.56,.64,1);filter:drop-shadow(-2px -2px 5px rgba(0,0,0,.35))}
   .perkwrap.show .clippy{opacity:1;transform:translate(6px,6px) rotate(-28deg);transition:opacity .4s ease 1.05s,transform .85s cubic-bezier(.34,1.56,.64,1) 1.05s} /* asomado desde el rincón, ligera inclinación */
   .perkwrap.show .clippy:hover{transform:translate(-8px,-14px) rotate(-15deg);transition:transform .3s ease}  /* se asoma más y se endereza para saludar */
   .clippy .cl-body{animation:clsway 4.6s ease-in-out infinite;transform-origin:50% 92%}
@@ -173,9 +173,12 @@
   .cl-balloon{max-width:215px!important}
   .cl-msg{margin-bottom:9px}
   .cl-acts{display:flex;gap:6px;flex-wrap:wrap}
-  .cl-b{font-family:var(--font);font-weight:700;font-size:11px;border-radius:8px;padding:6px 10px;cursor:pointer;border:none;text-decoration:none;display:inline-block;background:#1a1a1a;color:#fffbe8;transition:opacity .15s}
-  .cl-b.cl-b2{background:#f97316;color:#1a1a1a}
-  .cl-b:hover{opacity:.82}
+  /* botones estilo Office/Windows 97: gris con relieve 3D y esquinas rectas, a juego con Clippy */
+  .cl-b{font-family:'Tahoma','MS Sans Serif',Geneva,sans-serif;font-weight:400;font-size:12px;line-height:1;letter-spacing:.2px;color:#000;background:#c0c0c0;border-radius:0;padding:5px 11px;cursor:pointer;text-decoration:none;display:inline-block;border:2px solid;border-color:#dfdfdf #808080 #808080 #dfdfdf;box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 #000;transition:none}
+  .cl-b.cl-b2{background:#c0c0c0;color:#000}
+  .cl-b:hover{background:#c8c8c8}
+  .cl-b:active{border-color:#808080 #dfdfdf #dfdfdf #808080;box-shadow:inset 1px 1px 0 #000;padding:6px 10px 4px 12px}
+  .cl-b:focus-visible{outline:1px dotted #000;outline-offset:-4px}
   /* modal de feedback del equipo */
   .fb-modal{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;background:rgba(5,5,9,.78);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .25s}
   .fb-modal.show{opacity:1;pointer-events:auto}
@@ -384,7 +387,7 @@
           </div>
           <div class="clippy" id="clippy" title="Mira un ejemplo real" role="button" aria-label="Ver ejemplo de tarjeta">
           <div class="cl-body">
-            <svg viewBox="0 0 80 96" width="78" height="94" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
+            <svg viewBox="0 0 80 96" width="70" height="84" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
               <defs>
                 <linearGradient id="cl-metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f4f4f4"/><stop offset="35%" stop-color="#c0c0c0"/><stop offset="55%" stop-color="#808080"/><stop offset="80%" stop-color="#a8a8a8"/><stop offset="100%" stop-color="#606060"/></linearGradient>
                 <linearGradient id="cl-shine" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0%" stop-color="#fff" stop-opacity="0.95"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></linearGradient>
