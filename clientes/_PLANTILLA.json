@@ -1,0 +1,15 @@
+{
+  "_uso": "Copia este archivo a clientes/<token>.json. El cliente abre bienvenida.soulia.info/?c=<token>. Lo genera la skill 'bienvenida'.",
+  "nombre": "Nombre de pila del contacto",
+  "cliente": "XX",
+  "empresa": "Nombre de la empresa del cliente",
+  "logo": "assets/clientes/<token>.png   (o null si no hay logo)",
+  "plan": "Nombre del plan/oferta contratado",
+  "resultado": "→ El resultado prometido en una frase",
+  "planLead": "Frase de refuerzo (de qué le liberamos / qué gana). Tono voz-cliente.",
+  "giftTitle": "Tu auditoría exprés",
+  "giftDesc": "Texto del regalo (auditoría). Ajustar al nicho si procede.",
+  "wa": "34676536353",
+  "impactHead": "Titular de impacto en HTML (puede llevar <br> y <span class=\"nm\">resaltado</span>).",
+  "botName": "Nova"
+}

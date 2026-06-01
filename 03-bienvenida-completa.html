@@ -394,25 +394,40 @@
 <script>
 /* ===== Config de ejemplo — TODO esto viene del CRM / intake por cliente =====
    (plan y resultado salen del catálogo de ofertas, doc 01 → adaptable a cada cliente) */
-const DATA={
+/* Valores por defecto (DEMO). Para un cliente real se cargan de clientes/<token>.json vía ?c= */
+var DATA={
   nombre:'Marcos',
-  cliente:'CS',
-  plan:'Plan Crecimiento IA',                                  // ← por cliente
-  resultado:'→ Automatizar tu captación y dejar de perder leads', // ← por cliente
+  cliente:'CS',                 // iniciales (fallback si no hay logo)
+  empresa:'Clínica Sonrisa',
+  logo:null,                    // URL del logo del cliente (opcional)
+  plan:'Plan Crecimiento IA',
+  resultado:'→ Automatizar tu captación y dejar de perder leads',
   planLead:'Hasta hoy tirabas tú del carro. A partir de ahora montamos el sistema que lo hace por ti, y tú recuperas tu tiempo para lo que de verdad importa.',
   giftTitle:'Tu auditoría exprés',
   giftDesc:'Analizamos tu negocio y te marcamos dónde estás perdiendo tiempo ahora mismo y cómo recuperarlo. Solicítala y te la preparamos sin coste.',
-  wa:'34676536353', // ← WhatsApp de Jorge (prefijo país 34 + número)
-  impactHead:'Hoy es el día que tu negocio<br>deja de depender de que<br><span class="nm">tú lo hagas todo</span>.', // ← editable por cliente
+  wa:'34676536353',
+  impactHead:'Hoy es el día que tu negocio<br>deja de depender de que<br><span class="nm">tú lo hagas todo</span>.',
   botName:'Nova'
 };
-document.getElementById('impactHead').innerHTML=DATA.impactHead;
-document.getElementById('nm').textContent=DATA.nombre;
-document.getElementById('nm2').textContent=DATA.nombre;
-document.getElementById('cli').textContent=DATA.cliente;
-document.getElementById('planTag').textContent=DATA.plan;
-document.getElementById('planRes').textContent=DATA.resultado;
-document.getElementById('planLead').textContent=DATA.planLead;
+function applyData(){
+  document.getElementById('impactHead').innerHTML=DATA.impactHead;
+  document.getElementById('nm').textContent=DATA.nombre;
+  document.getElementById('nm2').textContent=DATA.nombre;
+  document.getElementById('planTag').textContent=DATA.plan;
+  document.getElementById('planRes').textContent=DATA.resultado;
+  document.getElementById('planLead').textContent=DATA.planLead;
+  const cli=document.getElementById('cli');
+  if(DATA.logo){ cli.innerHTML='<img src="'+DATA.logo+'" alt="'+(DATA.empresa||'')+'" style="height:100%;width:100%;object-fit:contain;border-radius:14px">'; cli.style.background='#fff'; cli.style.padding='8px'; }
+  else { cli.textContent=DATA.cliente; }
+}
+/* Carga los datos del cliente por ?c=<token>. Sin token => demo. */
+function loadClient(){
+  const c=new URLSearchParams(location.search).get('c');
+  if(!c) return Promise.resolve();
+  return fetch('clientes/'+encodeURIComponent(c)+'.json',{cache:'no-store'})
+    .then(r=>r.ok?r.json():null).then(j=>{ if(j) Object.assign(DATA,j); }).catch(()=>{});
+}
+window.__clientReady = loadClient().then(applyData);
 
 /* ===== TRACKING: captura todo el contexto del visitante por cada acción =====
    En el prototipo se ve en la consola (F12). En producción esto se envía al CRM,
@@ -443,7 +458,7 @@ function track(ev,extra){
   // TODO producción: navigator.sendBeacon('https://crm.../api/eventos', JSON.stringify(p));
   return p;
 }
-track('visita');
+window.__clientReady.then(()=>track('visita'));
 addEventListener('scroll',()=>{const h=document.documentElement,d=h.scrollHeight-innerHeight;if(d>0){const pc=Math.round(h.scrollTop/d*100);if(pc>_scrollMax)_scrollMax=pc;}},{passive:true});
 
 /* atención por sección: cuánto mira cada parte y dónde abandona */

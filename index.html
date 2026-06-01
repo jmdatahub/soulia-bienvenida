@@ -415,25 +415,40 @@
 <script>
 /* ===== Config de ejemplo — TODO esto viene del CRM / intake por cliente =====
    (plan y resultado salen del catálogo de ofertas, doc 01 → adaptable a cada cliente) */
-const DATA={
+/* Valores por defecto (DEMO). Para un cliente real se cargan de clientes/<token>.json vía ?c= */
+var DATA={
   nombre:'Marcos',
-  cliente:'CS',
-  plan:'Plan Crecimiento IA',                                  // ← por cliente
-  resultado:'→ Automatizar tu captación y dejar de perder leads', // ← por cliente
+  cliente:'CS',                 // iniciales (fallback si no hay logo)
+  empresa:'Clínica Sonrisa',
+  logo:null,                    // URL del logo del cliente (opcional)
+  plan:'Plan Crecimiento IA',
+  resultado:'→ Automatizar tu captación y dejar de perder leads',
   planLead:'Hasta hoy tirabas tú del carro. A partir de ahora montamos el sistema que lo hace por ti, y tú recuperas tu tiempo para lo que de verdad importa.',
   giftTitle:'Tu auditoría exprés',
   giftDesc:'Analizamos tu negocio y te marcamos dónde estás perdiendo tiempo ahora mismo y cómo recuperarlo. Solicítala y te la preparamos sin coste.',
-  wa:'34676536353', // ← WhatsApp de Jorge (prefijo país 34 + número)
-  impactHead:'Hoy es el día que tu negocio<br>deja de depender de que<br><span class="nm">tú lo hagas todo</span>.', // ← editable por cliente
+  wa:'34676536353',
+  impactHead:'Hoy es el día que tu negocio<br>deja de depender de que<br><span class="nm">tú lo hagas todo</span>.',
   botName:'Nova'
 };
-document.getElementById('impactHead').innerHTML=DATA.impactHead;
-document.getElementById('nm').textContent=DATA.nombre;
-document.getElementById('nm2').textContent=DATA.nombre;
-document.getElementById('cli').textContent=DATA.cliente;
-document.getElementById('planTag').textContent=DATA.plan;
-document.getElementById('planRes').textContent=DATA.resultado;
-document.getElementById('planLead').textContent=DATA.planLead;
+function applyData(){
+  document.getElementById('impactHead').innerHTML=DATA.impactHead;
+  document.getElementById('nm').textContent=DATA.nombre;
+  document.getElementById('nm2').textContent=DATA.nombre;
+  document.getElementById('planTag').textContent=DATA.plan;
+  document.getElementById('planRes').textContent=DATA.resultado;
+  document.getElementById('planLead').textContent=DATA.planLead;
+  const cli=document.getElementById('cli');
+  if(DATA.logo){ cli.innerHTML='<img src="'+DATA.logo+'" alt="'+(DATA.empresa||'')+'" style="height:100%;width:100%;object-fit:contain;border-radius:14px">'; cli.style.background='#fff'; cli.style.padding='8px'; }
+  else { cli.textContent=DATA.cliente; }
+}
+/* Carga los datos del cliente por ?c=<token>. Sin token => demo. */
+function loadClient(){
+  const c=new URLSearchParams(location.search).get('c');
+  if(!c) return Promise.resolve();
+  return fetch('clientes/'+encodeURIComponent(c)+'.json',{cache:'no-store'})
+    .then(r=>r.ok?r.json():null).then(j=>{ if(j) Object.assign(DATA,j); }).catch(()=>{});
+}
+window.__clientReady = loadClient().then(applyData);
 
 /* ===== TRACKING: captura todo el contexto del visitante por cada acción =====
    En el prototipo se ve en la consola (F12). En producción esto se envía al CRM,
@@ -464,7 +479,7 @@ function track(ev,extra){
   // TODO producción: navigator.sendBeacon('https://crm.../api/eventos', JSON.stringify(p));
   return p;
 }
-track('visita');
+window.__clientReady.then(()=>track('visita'));
 addEventListener('scroll',()=>{const h=document.documentElement,d=h.scrollHeight-innerHeight;if(d>0){const pc=Math.round(h.scrollTop/d*100);if(pc>_scrollMax)_scrollMax=pc;}},{passive:true});
 
 /* atención por sección: cuánto mira cada parte y dónde abandona */
@@ -749,7 +764,7 @@ document.getElementById('perkBtn').addEventListener('click',function(){
   const C={o:'#f97316',oL:'#fb923c',oD:'#ea580c',cy:'#22d3ee',w:'#fff3e6'};
   const eoc=t=>1-Math.pow(1-t,3),eob=t=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);},lerp=(a,b,t)=>a+(b-a)*t,clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),rand=(a,b)=>a+Math.random()*(b-a);
   const soulImg=new Image();soulImg.src='assets/soul-ia-isotipo.png';let soulReady=false;soulImg.onload=()=>soulReady=true;
-  const initials=(window.DATA&&DATA.cliente)||'CS';
+  let initials='CS';
   let actx=null;function pop(big){try{if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();const t=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.setValueAtTime(big?420:660+Math.random()*100,t);o.frequency.exponentialRampToValueAtTime(big?120:180,t+(big?.22:.12));g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(big?.4:.3,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+(big?.32:.18));o.connect(g).connect(actx.destination);o.start(t);o.stop(t+.34);}catch(e){}}
   function whoosh(){try{if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();const t=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();o.type='sawtooth';o.frequency.setValueAtTime(120,t);o.frequency.exponentialRampToValueAtTime(520,t+.5);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.07,t+.25);g.gain.exponentialRampToValueAtTime(.0001,t+.6);const lp=actx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=900;o.connect(lp).connect(g).connect(actx.destination);o.start(t);o.stop(t+.62);}catch(e){}}
 
@@ -764,7 +779,6 @@ document.getElementById('perkBtn').addEventListener('click',function(){
   function baseR(){return clamp(Math.min(W,H)*0.085,46,92);}
   function newB(type,x,y,r){return{type,x,y,r,ox:0,oy:0,vx:rand(-.3,.3),vy:rand(-.3,.3),bob:Math.random()*6.28,glow:type==='noise'?rand(.6,.95):1.1,scale:0,alive:true,enterT:rand(0,320),rot:Math.random()*6.28};}
   function makeBubbles(){bubbles=[];const R=baseR();for(let i=0;i<6;i++)bubbles.push(newB('noise',rand(W*0.16,W*0.84),rand(H*0.18,H*0.76),R*rand(.55,1.28)));bubbles.push(newB('client',rand(W*0.25,W*0.45),rand(H*0.3,H*0.6),R*1.08));bubbles.push(newB('soul',rand(W*0.55,W*0.75),rand(H*0.3,H*0.6),R*1.08));}
-  makeBubbles();
 
   function onClick(px,py){if(phase!=='play')return;for(const b of bubbles){if(!b.alive||b.type!=='noise')continue;const bx=b.x+b.ox,by=b.y+b.oy+Math.sin(b.bob)*7;if(Math.hypot(px-bx,py-by)<=b.r*b.scale*1.1){explode(b,false);b.alive=false;document.getElementById('ihint').style.opacity=0;check();return;}}}
   function noiseLeft(){return bubbles.filter(b=>b.alive&&b.type==='noise').length;}
@@ -794,8 +808,9 @@ document.getElementById('perkBtn').addEventListener('click',function(){
 
   let last=performance.now();
   function frame(now){let dt=now-last;last=now;if(dt>50)dt=50;if(!done){update(dt);bg();for(const b of bubbles)drawB(b);drawP();drawF();}requestAnimationFrame(frame);}
-  requestAnimationFrame(frame);
+  function begin(){ initials=(window.DATA&&DATA.cliente)||'CS'; makeBubbles(); requestAnimationFrame(frame); }
   document.getElementById('iskip').addEventListener('click',finishIntro);
+  (window.__clientReady||Promise.resolve()).then(begin);
 })();
 </script>
 
