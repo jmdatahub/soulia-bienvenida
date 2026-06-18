@@ -440,7 +440,8 @@ var DATA={
   giftDesc:'Analizamos tu negocio y te marcamos dónde estás perdiendo tiempo ahora mismo y cómo recuperarlo. Solicítala y te la preparamos sin coste.',
   wa:'34676536353',
   impactHead:'Hoy es el día que tu negocio<br>deja de depender de que<br><span class="nm">tú lo hagas todo</span>.',
-  botName:'Nova'
+  botName:'Nova',
+  contactId:null               // id del contacto en el CRM (lo pone la skill 'bienvenida') → cuelga el feedback en su ficha
 };
 function applyData(){
   const h=new Date().getHours(), g=h<6?'Buenas noches':h<13?'Buenos días':h<21?'Buenas tardes':'Buenas noches';
@@ -473,6 +474,7 @@ function track(ev,extra){
   const nc=navigator.connection||{};
   const p={
     evento:ev, ts:new Date().toISOString(),
+    contactId:DATA.contactId, empresa:DATA.empresa,
     cliente:DATA.cliente, nombre:DATA.nombre, plan:DATA.plan,
     url:location.href, referrer:document.referrer||null,
     idioma:navigator.language, idiomas:(navigator.languages||[]).join(','),
