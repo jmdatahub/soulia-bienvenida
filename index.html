@@ -255,6 +255,9 @@
     /* regalo y perk: menos padding interno para que respiren en pantallas pequeñas */
     .gift-content{padding:38px 22px}
     .perk{padding:22px 20px}
+    /* columnas "cómo trabajamos": entran en vertical (no en horizontal) para no desbordar */
+    .cols .col.us,.cols .col.you{transform:translateY(24px)}
+    .reveal.in .cols .col.us,.reveal.in .cols .col.you{transform:none}
   }
 
   /* ===== intro overlay (pompas) ===== */
@@ -560,13 +563,13 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
 /* ===== Fondo ambiental (mismo lenguaje que la intro) ===== */
 const bgc=document.getElementById('bgcanvas'),bx=bgc.getContext('2d');
-let BW,BH;function rb(){BW=bgc.width=innerWidth;BH=bgc.height=innerHeight;}addEventListener('resize',rb);rb();
+let BW,BH;function rb(){BW=bgc.width=document.documentElement.clientWidth;BH=bgc.height=document.documentElement.clientHeight;}addEventListener('resize',rb);rb();
 const dust=[];for(let i=0;i<40;i++)dust.push({x:Math.random(),y:Math.random(),r:Math.random()*1.4+.3,s:Math.random()*.012+.003,a:Math.random()*.14+.03,c:Math.random()<.25?'#22d3ee':'#f97316'});
 function bgloop(){bx.clearRect(0,0,BW,BH);const g=bx.createRadialGradient(BW/2,BH*0.3,0,BW/2,BH*0.3,Math.max(BW,BH)*0.8);g.addColorStop(0,'#10101a');g.addColorStop(1,'#07070b');bx.fillStyle=g;bx.fillRect(0,0,BW,BH);for(const d of dust){d.y-=d.s*0.01;if(d.y<-0.02)d.y=1.02;bx.globalAlpha=d.a;bx.fillStyle=d.c;bx.beginPath();bx.arc(d.x*BW,d.y*BH,d.r,0,6.28);bx.fill();}bx.globalAlpha=1;requestAnimationFrame(bgloop);}bgloop();
 
 /* ===== Confetti (sin librerías) ===== */
 const fx=document.getElementById('fx'),fc=fx.getContext('2d');
-let FW,FH;function rf(){FW=fx.width=innerWidth;FH=fx.height=innerHeight;}addEventListener('resize',rf);rf();
+let FW,FH;function rf(){FW=fx.width=document.documentElement.clientWidth;FH=fx.height=document.documentElement.clientHeight;}addEventListener('resize',rf);rf();
 let conf=[];
 const isoImg=new Image(); isoImg.src='assets/soul-ia-isotipo.png'; let isoReady=false; isoImg.onload=()=>isoReady=true;
 function burst(x,y,amount,power){
@@ -844,7 +847,7 @@ document.getElementById('perkBtn').addEventListener('click',function(){
   const cv=document.getElementById('introcv'),ctx=cv.getContext('2d');
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.body.classList.add('intro-active');
-  let W,H,DPR;function rz(){DPR=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;cv.style.width=W+'px';cv.style.height=H+'px';ctx.setTransform(DPR,0,0,DPR,0,0);}
+  let W,H,DPR;function rz(){DPR=Math.min(devicePixelRatio||1,2);W=document.documentElement.clientWidth;H=document.documentElement.clientHeight;cv.width=W*DPR;cv.height=H*DPR;cv.style.width=W+'px';cv.style.height=H+'px';ctx.setTransform(DPR,0,0,DPR,0,0);}
   addEventListener('resize',rz);rz();
   const C={o:'#f97316',oL:'#fb923c',oD:'#ea580c',cy:'#22d3ee',w:'#fff3e6'};
   const eoc=t=>1-Math.pow(1-t,3),eob=t=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);},lerp=(a,b,t)=>a+(b-a)*t,clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),rand=(a,b)=>a+Math.random()*(b-a);
