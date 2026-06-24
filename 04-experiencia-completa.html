@@ -242,6 +242,21 @@
   .toast .msg{font-size:14px;line-height:1.35}
   .toast .msg b{color:var(--cyan)}
 
+  /* ===== Afinado móvil (revisión responsive 2026-06-18) ===== */
+  @media (max-width:560px){
+    section{padding:62px 0}
+    .wrap{padding:0 18px}
+    #hero{padding:72px 20px 52px}
+    .card{padding:22px 20px}
+    /* paso del camino: el botón salta a ancho completo debajo del texto (en vez de robarle sitio al lado) */
+    .step{flex-wrap:wrap}
+    .step .tx{min-width:0}
+    .step button{flex:1 0 100%;width:100%;margin-top:10px}
+    /* regalo y perk: menos padding interno para que respiren en pantallas pequeñas */
+    .gift-content{padding:38px 22px}
+    .perk{padding:22px 20px}
+  }
+
   /* ===== intro overlay (pompas) ===== */
   body.intro-active{overflow:hidden}
   #intro{position:fixed;inset:0;z-index:100;background:#07070b;transition:opacity .8s ease}
@@ -270,7 +285,7 @@
 
 <div class="content">
   <!-- HERO -->
-  <section id="hero" data-sec="hero">
+  <section id="hero" class="hero" data-sec="hero">
     <div class="hero-logos">
       <span class="clilogo" id="cli">CS</span>
       <span class="x">×</span>
