@@ -9,6 +9,20 @@
   "planLead": "Hasta hoy, cada diagnóstico GTM5 te costaba horas de trabajo manual. A partir de ahora ese trabajo lo hace la plataforma, y tú te dedicas a lo que mejor sabes hacer: la estrategia.",
   "giftTitle": "Tu auditoría exprés",
   "giftDesc": "Analizamos cómo trabajáis en Taktice y te marcamos dónde se os van horas en tareas que se pueden automatizar, y cómo recuperarlas. Solicítala y te la preparamos sin coste.",
+  "caminoLead": "Ve a tu ritmo. Cada paso nos acerca al GTM5 funcionando, y el último lo desbloquea todo.",
+  "pasos": [
+    {"t": "Bienvenida", "d": "Ya estás dentro. Este lo dejamos hecho ✨", "done": true},
+    {"t": "Tu material GTM5", "d": "El modelo, un par de ejemplos y la documentación. En cuanto nos llegue, el motor empieza a aprender de lo tuyo", "cta": "Enviarlo por email", "url": "mailto:jorgemp@automatizaconsoulia.com?subject=Material%20GTM5%20-%20Taktice", "msg": "¡Genial! En cuanto llegue nos ponemos con ello 🙌"},
+    {"t": "Kickoff con el equipo", "d": "Isaac, tu responsable del proyecto, y Jorge cierran contigo el plan de arranque. Tú eliges el hueco", "cta": "Proponer hueco", "url": "https://wa.me/34676536353?text=Hola%20Jorge%2C%20soy%20Jaime.%20Quiero%20cerrar%20el%20hueco%20para%20el%20kickoff%20del%20GTM5", "msg": "¡Hecho! Te confirmamos el hueco enseguida 🚀"},
+    {"t": "¡Arrancamos!", "d": "Con el material y el kickoff hechos, el equipo construye. Se abre al completar lo de arriba", "cta": "Empezar", "msg": "¡Listo! Ya está todo. Bienvenido de verdad 🎉"}
+  ],
+  "esperarTitle": "Lo que viene ahora, claro.",
+  "timeline": [
+    {"t": "Lo primero", "d": "Recibimos tu material GTM5. De esto tiramos nosotros: te escribimos para recogerlo, tú solo lo tienes a mano."},
+    {"t": "Después", "d": "Kickoff contigo: cerramos el plan de arranque y el equipo se pone a construir."},
+    {"t": "En marcha", "d": "Avances cortos y validados contigo, como quedamos. Verás el GTM5 funcionando mucho antes de la entrega del 1 de septiembre."},
+    {"icon": "★", "t": "Tu contacto directo", "d": "Isaac, tu responsable del proyecto, y Jorge. A un mensaje, siempre que lo necesites."}
+  ],
   "wa": "34676536353",
   "impactHead": "Hoy es el día que el GTM5<br>pasa de método a<br><span class=\"nm\">máquina de captar clientes</span>.",
   "botName": "Nova",

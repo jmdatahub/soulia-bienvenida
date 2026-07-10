@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Soul IA · Experiencia de bienvenida (pompas + landing)</title>
+<title>Bienvenida · Soul IA</title>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="theme-color" content="#07070b"/>
+<link rel="icon" type="image/png" href="assets/soul-ia-isotipo.png"/>
 <style>
   :root{
     --bg0:#07070b;--bg1:#0f0f18;--card:#14141f;--card2:#191925;
@@ -322,7 +325,7 @@
       <p class="lead" id="caminoLead">Ve a tu ritmo, sin agobios. Cada paso te acerca un poco más, y el último lo desbloquea todo.</p>
       <div class="progresswrap">
         <div class="progresstop"><span class="pct" id="pct">25%</span><span class="lbl" id="plbl">1 de 4 completado</span></div>
-        <div class="bar"><i id="barfill"></i></div>
+        <div class="bar" role="progressbar" aria-label="Progreso de tu camino" aria-valuemin="0" aria-valuemax="100" aria-valuenow="25" id="barwrap"><i id="barfill"></i></div>
       </div>
       <div class="steps" id="steps"></div>
     </div>
@@ -362,9 +365,10 @@
       <h2 id="esperarTitle">Los próximos días, claros.</h2>
       <div class="card" style="margin-top:24px">
         <div class="tl" id="tl">
-          <div class="it"><div class="dot">1</div><div><h4>Hoy</h4><p>Completas estos pasos y nos dejas lo que necesitamos. Nada más por tu parte.</p></div></div>
-          <div class="it"><div class="dot">2</div><div><h4>Esta semana</h4><p>Nos sentamos contigo en el kickoff: alineamos objetivos y te enseñamos el plan exacto.</p></div></div>
-          <div class="it"><div class="dot">3</div><div><h4>Primeras 2 semanas</h4><p>Montamos la primera parte. Vas a ver cosas funcionando antes de lo que crees.</p></div></div>
+          <!-- SIEMPRE anclado a SECUENCIA, nunca a "hoy/esta semana": no controlamos cuándo abre esto el cliente (regla Jorge 2026-07-10) -->
+          <div class="it"><div class="dot">1</div><div><h4>Lo primero</h4><p>Nos dejas lo que necesitamos para arrancar. Te escribimos nosotros para pedírtelo, sin vueltas.</p></div></div>
+          <div class="it"><div class="dot">2</div><div><h4>Después</h4><p>Nos sentamos contigo en el kickoff: alineamos objetivos y te enseñamos el plan exacto.</p></div></div>
+          <div class="it"><div class="dot">3</div><div><h4>En marcha</h4><p>Montamos la primera parte. Vas a ver cosas funcionando antes de lo que crees.</p></div></div>
           <div class="it"><div class="dot">★</div><div><h4>Tu contacto directo</h4><p>Jorge y el equipo, a un mensaje. Siempre que lo necesites.</p></div></div>
         </div>
       </div>
@@ -447,7 +451,7 @@
     </div>
   </section>
 
-  <footer><img src="assets/soul-ia-isotipo.png" alt=""/> SOUL IA · prototipo de bienvenida</footer>
+  <footer><img src="assets/soul-ia-isotipo.png" alt=""/> SOUL IA · tu espacio de bienvenida</footer>
 </div>
 
 
@@ -486,6 +490,7 @@ var DATA={
 function applyData(){
   const h=new Date().getHours(), g=h<6?'Buenas noches':h<13?'Buenos días':h<21?'Buenas tardes':'Buenas noches';
   const ge=document.getElementById('greet'); if(ge) ge.textContent=g;
+  document.title='Bienvenida, '+DATA.nombre+' · Soul IA';
   document.getElementById('impactHead').innerHTML=DATA.impactHead;
   document.getElementById('nm').textContent=DATA.nombre;
   document.getElementById('nm2').textContent=DATA.nombre;
@@ -568,7 +573,11 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 const bgc=document.getElementById('bgcanvas'),bx=bgc.getContext('2d');
 let BW,BH;function rb(){BW=bgc.width=document.documentElement.clientWidth;BH=bgc.height=document.documentElement.clientHeight;}addEventListener('resize',rb);rb();
 const dust=[];for(let i=0;i<40;i++)dust.push({x:Math.random(),y:Math.random(),r:Math.random()*1.4+.3,s:Math.random()*.012+.003,a:Math.random()*.14+.03,c:Math.random()<.25?'#22d3ee':'#f97316'});
-function bgloop(){bx.clearRect(0,0,BW,BH);const g=bx.createRadialGradient(BW/2,BH*0.3,0,BW/2,BH*0.3,Math.max(BW,BH)*0.8);g.addColorStop(0,'#10101a');g.addColorStop(1,'#07070b');bx.fillStyle=g;bx.fillRect(0,0,BW,BH);for(const d of dust){d.y-=d.s*0.01;if(d.y<-0.02)d.y=1.02;bx.globalAlpha=d.a;bx.fillStyle=d.c;bx.beginPath();bx.arc(d.x*BW,d.y*BH,d.r,0,6.28);bx.fill();}bx.globalAlpha=1;requestAnimationFrame(bgloop);}bgloop();
+/* gradiente precalculado (pintarlo cada frame era trabajo tirado) + pausa cuando la pestaña no se ve */
+let bgGrad=null;function mkGrad(){bgGrad=bx.createRadialGradient(BW/2,BH*0.3,0,BW/2,BH*0.3,Math.max(BW,BH)*0.8);bgGrad.addColorStop(0,'#10101a');bgGrad.addColorStop(1,'#07070b');}
+addEventListener('resize',mkGrad);mkGrad();
+function bgloop(){if(document.hidden)return;bx.clearRect(0,0,BW,BH);bx.fillStyle=bgGrad;bx.fillRect(0,0,BW,BH);for(const d of dust){d.y-=d.s*0.01;if(d.y<-0.02)d.y=1.02;bx.globalAlpha=d.a;bx.fillStyle=d.c;bx.beginPath();bx.arc(d.x*BW,d.y*BH,d.r,0,6.28);bx.fill();}bx.globalAlpha=1;requestAnimationFrame(bgloop);}bgloop();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){requestAnimationFrame(bgloop);requestAnimationFrame(fxloop);}});
 
 /* ===== Confetti (sin librerías) ===== */
 const fx=document.getElementById('fx'),fc=fx.getContext('2d');
@@ -579,7 +588,7 @@ function burst(x,y,amount,power){
   for(let i=0;i<amount;i++){const a=Math.random()*6.28,sp=Math.random()*power+2;
     conf.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-Math.random()*3,r:Math.random()*5+2,life:1,decay:Math.random()*.012+.006,col:['#f97316','#fb923c','#22d3ee','#fff3e6'][Math.floor(Math.random()*4)],rot:Math.random()*6.28,vr:Math.random()*.3-.15,shape:Math.random()<0.22?3:Math.floor(Math.random()*3)});}
 }
-function fxloop(){fc.clearRect(0,0,FW,FH);for(let i=conf.length-1;i>=0;i--){const p=conf[i];p.x+=p.vx;p.y+=p.vy;p.vy+=0.14;p.vx*=0.99;p.life-=p.decay;p.rot+=p.vr;if(p.life<=0){conf.splice(i,1);continue;}fc.globalAlpha=Math.max(0,p.life);fc.fillStyle=p.col;fc.save();fc.translate(p.x,p.y);fc.rotate(p.rot);
+function fxloop(){if(document.hidden)return;fc.clearRect(0,0,FW,FH);for(let i=conf.length-1;i>=0;i--){const p=conf[i];p.x+=p.vx;p.y+=p.vy;p.vy+=0.14;p.vx*=0.99;p.life-=p.decay;p.rot+=p.vr;if(p.life<=0){conf.splice(i,1);continue;}fc.globalAlpha=Math.max(0,p.life);fc.fillStyle=p.col;fc.save();fc.translate(p.x,p.y);fc.rotate(p.rot);
   if(p.shape===0){fc.fillRect(-p.r/2,-p.r/2,p.r,p.r*0.5);} /* serpentina */
   else if(p.shape===1){fc.beginPath();fc.arc(0,0,p.r*0.42,0,6.28);fc.fill();} /* círculo */
   else if(p.shape===3){ if(isoReady){fc.drawImage(isoImg,-p.r*1.5,-p.r*1.5,p.r*3,p.r*3);} else {fc.beginPath();fc.arc(0,0,p.r*0.42,0,6.28);fc.fill();} } /* isotipo Soul IA */
@@ -604,6 +613,11 @@ const STEPS=[
   {t:'¡Arrancamos!',d:'Se abre al completar lo de arriba. Lo bueno empieza aquí',done:false,cta:'Empezar',msg:'¡Listo! Ya está todo. Bienvenido de verdad 🎉'}
 ];
 const stepsEl=document.getElementById('steps');
+/* persistencia por cliente: los pasos hechos y el contador sobreviven a recargas
+   (que el cliente vuelva y su progreso siga ahí; auditoría UX 2026-07-10) */
+const _tok=new URLSearchParams(location.search).get('c')||'demo';
+function saveSteps(){try{localStorage.setItem('soulia_steps_'+_tok,JSON.stringify(STEPS.map(s=>!!s.done)));}catch(e){}}
+function restoreSteps(){try{const v=JSON.parse(localStorage.getItem('soulia_steps_'+_tok)||'null');if(Array.isArray(v)&&v.length===STEPS.length)v.forEach((d,i)=>{if(d)STEPS[i].done=true;});}catch(e){}}
 function render(){
   stepsEl.innerHTML='';
   let firstUndone=STEPS.findIndex(s=>!s.done);
@@ -625,16 +639,17 @@ function updateProgress(){
   const done=STEPS.filter(s=>s.done).length, total=STEPS.length, p=Math.round(done/total*100);
   document.getElementById('pct').textContent=p+'%';
   document.getElementById('plbl').textContent=`${done} de ${total} completado${done>1?'s':''}`;
+  const bw=document.getElementById('barwrap');if(bw)bw.setAttribute('aria-valuenow',p);
   const bf=document.getElementById('barfill');bf.style.width=p+'%';
   if(p>=100){bf.classList.remove('full');void bf.offsetWidth;bf.classList.add('full');}
 }
 function complete(i,btn){
-  STEPS[i].done=true; tone(SCALE[Math.min(i,SCALE.length-1)],.3,.16); /* nota ascendente por paso (firma) */
+  STEPS[i].done=true; saveSteps(); tone(SCALE[Math.min(i,SCALE.length-1)],.3,.16); /* nota ascendente por paso (firma) */
   if(STEPS[i].url){try{window.open(STEPS[i].url,'_blank');}catch(_e){}}
   track('paso_completado',{paso:i+1,pasoTitulo:STEPS[i].t});
   const r=btn.getBoundingClientRect(); burst(r.left+r.width/2,r.top+r.height/2,26,7);
   const allDone=STEPS.every(s=>s.done);
-  if(allDone){ track('camino_completado'); setTimeout(()=>{burst(FW/2,FH*0.4,160,12);chime();say('¡Lo conseguiste, '+DATA.nombre+'! 🎉 Empezamos oficialmente.');},250); }
+  if(allDone){ try{localStorage.setItem('soulia_done_'+_tok,'1');}catch(e){} track('camino_completado'); setTimeout(()=>{burst(FW/2,FH*0.4,160,12);chime();say('¡Lo conseguiste, '+DATA.nombre+'! 🎉 Empezamos oficialmente.');},250); }
   else { say(STEPS[i].msg||'¡Hecho! ✓'); }
   render();
 }
@@ -644,8 +659,8 @@ window.__clientReady.then(()=>{
   if(Array.isArray(DATA.pasos)&&DATA.pasos.length){
     STEPS.length=0;
     DATA.pasos.forEach(s=>STEPS.push({t:s.t,d:s.d,done:!!s.done,cta:s.cta||null,url:s.url||null,msg:s.msg||null}));
-    render();
   }
+  restoreSteps(); render();
   if(DATA.caminoTitle)document.getElementById('caminoTitle').textContent=DATA.caminoTitle;
   if(DATA.caminoLead)document.getElementById('caminoLead').textContent=DATA.caminoLead;
   if(Array.isArray(DATA.timeline)&&DATA.timeline.length){
@@ -798,7 +813,14 @@ document.getElementById('giftBtn').addEventListener('click',()=>{track('solicita
 const cdEl=document.getElementById('countdown');
 let cdEnd=null,cdTimer=null;
 function tickCd(){if(!cdEnd)return;let s=Math.max(0,Math.floor((cdEnd-Date.now())/1000));const h=String(Math.floor(s/3600)).padStart(2,'0'),m=String(Math.floor(s%3600/60)).padStart(2,'0'),ss=String(s%60).padStart(2,'0');cdEl.textContent=h+':'+m+':'+ss;}
-function startCountdown(){if(cdTimer)return;cdEnd=Date.now()+48*3600*1000;tickCd();cdTimer=setInterval(tickCd,1000);}
+function startCountdown(){if(cdTimer)return;
+  /* deadline REAL persistida por cliente: si vuelve mañana, el contador sigue donde iba
+     (un contador que se reinicia en cada visita huele a urgencia falsa; auditoría UX 2026-07-10).
+     Si ya venció, se abre una ventana nueva: la ventaja sigue disponible. */
+  const k='soulia_cd_'+_tok;let end=0;
+  try{end=parseInt(localStorage.getItem(k)||'0',10);}catch(e){}
+  if(!end||end<Date.now()){end=Date.now()+48*3600*1000;try{localStorage.setItem(k,String(end));}catch(e){}}
+  cdEnd=end;tickCd();cdTimer=setInterval(tickCd,1000);}
 
 /* ===== "La quiero al 50%" → WhatsApp con mensaje predeterminado ===== */
 document.getElementById('perkBtn').addEventListener('click',function(){
@@ -854,6 +876,7 @@ document.getElementById('perkBtn').addEventListener('click',function(){
   const fb=document.getElementById('clFb'); if(fb) fb.addEventListener('click',openFb);
   document.getElementById('fbClose').addEventListener('click',closeFb);
   modal.addEventListener('click',e=>{if(e.target===modal)closeFb();});
+  addEventListener('keydown',e=>{if(e.key==='Escape')closeFb();});
   document.getElementById('fbSend').addEventListener('click',()=>{
     const t=document.getElementById('fbText'),txt=(t.value||'').trim();
     if(!txt){t.focus();return;}
@@ -868,6 +891,10 @@ document.getElementById('perkBtn').addEventListener('click',function(){
 /* ===== INTRO DE POMPAS (overlay) -> al terminar revela la landing ===== */
 (function(){
   const overlay=document.getElementById('intro');
+  /* si este cliente ya completó su camino, no se le obliga a repetir el juego:
+     entra directo al contenido (auditoría UX 2026-07-10) */
+  try{const tk=new URLSearchParams(location.search).get('c')||'demo';
+    if(localStorage.getItem('soulia_done_'+tk)==='1'){overlay.style.display='none';return;}}catch(e){}
   const cv=document.getElementById('introcv'),ctx=cv.getContext('2d');
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.body.classList.add('intro-active');
