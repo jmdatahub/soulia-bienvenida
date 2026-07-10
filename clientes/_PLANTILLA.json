@@ -5,6 +5,7 @@
   "empresa": "Nombre de la empresa del cliente",
   "logo": "assets/clientes/<token>.png   (o null si no hay logo)",
   "logoBg": "'dark' si el logo es blanco/claro (lo deja sobre fondo oscuro); omitir o cualquier otro valor = caja blanca",
+  "logoPompa": "assets/clientes/<token>-pompa.png — SÍMBOLO principal del logo (icono, fondo transparente) para la pompa de la intro. Si falta se usa 'logo'; nunca dejar que salgan iniciales habiendo logo.",
   "plan": "Nombre del plan/oferta contratado",
   "resultado": "→ El resultado prometido en una frase",
   "planLead": "Frase de refuerzo (de qué le liberamos / qué gana). Tono voz-cliente.",

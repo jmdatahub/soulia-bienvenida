@@ -472,6 +472,7 @@ var DATA={
   cliente:'CS',                 // iniciales (fallback si no hay logo)
   empresa:'Clínica Sonrisa',
   logo:null,                    // URL del logo del cliente (opcional)
+  logoPompa:null,               // símbolo/icono del logo con fondo transparente para la pompa de la intro; si falta se usa logo
   plan:'Plan Crecimiento IA',
   resultado:'→ Automatizar tu captación y dejar de perder leads',
   planLead:'Hasta hoy tirabas tú del carro. A partir de ahora montamos el sistema que lo hace por ti, y tú recuperas tu tiempo para lo que de verdad importa.',
@@ -905,9 +906,20 @@ document.getElementById('perkBtn').addEventListener('click',function(){
       requestAnimationFrame(frame);return;
     }
     update(dt);bg();for(const b of bubbles)drawB(b);drawP();drawF();requestAnimationFrame(frame);}
-  function begin(){ initials=(window.DATA&&DATA.cliente)||'CS'; if(window.DATA&&DATA.logo){cliImg.src=DATA.logo;} makeBubbles(); requestAnimationFrame(frame); }
+  let started=false;
+  function begin(){ if(started)return; started=true; initials=(window.DATA&&DATA.cliente)||'CS'; makeBubbles(); requestAnimationFrame(frame); }
   document.getElementById('iskip').addEventListener('click',finishIntro);
-  (window.__clientReady||Promise.resolve()).then(begin);
+  /* la pompa del cliente lleva el SÍMBOLO del logo (logoPompa: icono con fondo transparente) y,
+     si no hay, el logo completo. Se espera a que la imagen cargue (máx 1600ms) antes de arrancar
+     la intro: nunca deben verse las iniciales por una carrera de carga (corrección Jorge 2026-07-10). */
+  (window.__clientReady||Promise.resolve()).then(()=>{
+    const src=window.DATA&&(DATA.logoPompa||DATA.logo);
+    if(!src){begin();return;}
+    const t=setTimeout(begin,1600);
+    cliImg.onload=()=>{cliReady=true;clearTimeout(t);begin();};
+    cliImg.onerror=()=>{clearTimeout(t);begin();};
+    cliImg.src=src;
+  });
 })();
 </script>
 
