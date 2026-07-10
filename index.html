@@ -70,6 +70,13 @@
   .step .tx p{font-size:13px;color:var(--muted);margin-top:2px}
   .step button{font-family:var(--font);font-weight:600;font-size:13px;color:#0a0a0f;background:linear-gradient(135deg,var(--orangeL),var(--orangeD));border:none;border-radius:10px;padding:11px 18px;cursor:pointer;transition:transform .15s,box-shadow .2s;box-shadow:0 0 18px rgba(249,115,22,.3)}
   .step button:hover{transform:translateY(-2px);box-shadow:0 0 26px rgba(249,115,22,.45)}
+  .stepinput{margin-top:12px;display:none;flex-direction:column;gap:9px}
+  .step.open .stepinput{display:flex}
+  .stepinput textarea{width:100%;min-height:72px;background:#101018;border:1px solid var(--border);border-radius:10px;color:#e8e8ee;padding:10px 12px;font-family:var(--font);font-size:13.5px;resize:vertical}
+  .stepinput textarea:focus{outline:none;border-color:rgba(249,115,22,.55)}
+  .stepinput .row{display:flex;gap:8px;align-items:center}
+  .stepinput .skp{font-family:var(--font);font-weight:600;font-size:13px;color:var(--muted);background:none;border:1px solid var(--border);border-radius:10px;padding:11px 16px;cursor:pointer;box-shadow:none}
+  .stepinput .skp:hover{color:#e8e8ee;transform:none;box-shadow:none}
   .step.done{border-color:rgba(16,185,129,.4);background:linear-gradient(160deg,rgba(16,185,129,.08),var(--card))}
   .step.done .ic{background:rgba(16,185,129,.18);border-color:rgba(16,185,129,.5);color:var(--success)}
   .step.locked{opacity:.45;filter:grayscale(.3)}
@@ -618,6 +625,7 @@ const stepsEl=document.getElementById('steps');
 const _tok=new URLSearchParams(location.search).get('c')||'demo';
 function saveSteps(){try{localStorage.setItem('soulia_steps_'+_tok,JSON.stringify(STEPS.map(s=>!!s.done)));}catch(e){}}
 function restoreSteps(){try{const v=JSON.parse(localStorage.getItem('soulia_steps_'+_tok)||'null');if(Array.isArray(v)&&v.length===STEPS.length)v.forEach((d,i)=>{if(d)STEPS[i].done=true;});}catch(e){}}
+const escS=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function render(){
   stepsEl.innerHTML='';
   let firstUndone=STEPS.findIndex(s=>!s.done);
@@ -626,14 +634,23 @@ function render(){
     const active = !s.done && i===firstUndone;
     const div=document.createElement('div');
     div.className='step'+(s.done?' done':'')+(locked?' locked':'')+(active?' active':'');
+    /* paso con aporte OPCIONAL inline (input:{placeholder,send,skip}): se escribe AQUÍ
+       mismo, sin sacar al cliente de la web; lo enviado entra por el canal del feedback
+       (Telegram + ficha + semanal). Correccion Jorge 2026-07-10: nada de mandarle a WhatsApp. */
+    const inp=s.input&&!s.done?`<div class="stepinput"><textarea placeholder="${escS(s.input.placeholder||'Cuéntanoslo aquí...')}"></textarea><div class="row"><button data-i="${i}" data-role="send">${escS(s.input.send||'Enviárselo al equipo')}</button><button class="skp" data-i="${i}" data-role="skip">${escS(s.input.skip||'Lo dejo así')}</button></div></div>`:'';
     div.innerHTML=`<div class="ic">${s.done?'✓':i+1}</div>
-      <div class="tx"><h4>${s.t}</h4><p>${s.d}</p></div>
-      ${s.cta&&!s.done?`<button data-i="${i}">${s.cta}</button>`:''}
+      <div class="tx"><h4>${s.t}</h4><p>${s.d}</p>${inp}</div>
+      ${s.cta&&!s.done?`<button data-i="${i}" data-role="cta">${s.cta}</button>`:''}
       <span class="check">✓</span>`;
     stepsEl.appendChild(div);
   });
   updateProgress();
-  stepsEl.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>complete(+b.dataset.i,b)));
+  stepsEl.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    const i=+b.dataset.i,s=STEPS[i],step=b.closest('.step');
+    if(b.dataset.role==='cta'&&s&&s.input){ step.classList.toggle('open'); const t=step.querySelector('textarea'); if(step.classList.contains('open')&&t)t.focus(); return; }
+    if(b.dataset.role==='send'&&s){ const t=step.querySelector('textarea'),txt=(t&&t.value||'').trim(); if(txt)track('feedback',{mensaje:'[Bienvenida · '+s.t+'] '+txt}); complete(i,b); return; }
+    complete(i,b);
+  }));
 }
 function updateProgress(){
   const done=STEPS.filter(s=>s.done).length, total=STEPS.length, p=Math.round(done/total*100);
@@ -658,7 +675,7 @@ render();
 window.__clientReady.then(()=>{
   if(Array.isArray(DATA.pasos)&&DATA.pasos.length){
     STEPS.length=0;
-    DATA.pasos.forEach(s=>STEPS.push({t:s.t,d:s.d,done:!!s.done,cta:s.cta||null,url:s.url||null,msg:s.msg||null}));
+    DATA.pasos.forEach(s=>STEPS.push({t:s.t,d:s.d,done:!!s.done,cta:s.cta||null,url:s.url||null,msg:s.msg||null,input:s.input||null}));
   }
   restoreSteps(); render();
   if(DATA.caminoTitle)document.getElementById('caminoTitle').textContent=DATA.caminoTitle;
