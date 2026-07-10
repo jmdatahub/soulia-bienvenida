@@ -13,7 +13,7 @@
   "pasos": [
     {"t": "Bienvenida", "d": "Ya estás dentro. Este lo dejamos hecho ✨", "done": true},
     {"t": "Tu material GTM5", "d": "El modelo, un par de ejemplos y la documentación. En cuanto nos llegue, el motor empieza a aprender de lo tuyo", "cta": "Enviarlo por email", "url": "mailto:jorgemp@automatizaconsoulia.com?subject=Material%20GTM5%20-%20Taktice", "msg": "¡Genial! En cuanto llegue nos ponemos con ello 🙌"},
-    {"t": "Kickoff con el equipo", "d": "Isaac, tu responsable del proyecto, y Jorge cierran contigo el plan de arranque. Tú eliges el hueco", "cta": "Reservar mi hueco", "url": "https://agenda.soulia.io", "msg": "¡Genial! Elige tu hueco y te llega la invitación al correo 📅"},
+    {"t": "Kickoff con el equipo", "d": "Isaac, tu responsable del proyecto, y Jorge cierran contigo el plan de arranque. Tú eliges el hueco", "cta": "Reservar mi hueco", "url": "https://agenda.soulia.io/?con=isaac", "msg": "¡Genial! Elige tu hueco y te llega la invitación al correo 📅"},
     {"t": "¡Arrancamos!", "d": "Con el material y el kickoff hechos, el equipo construye. Se abre al completar lo de arriba", "cta": "Empezar", "msg": "¡Listo! Ya está todo. Bienvenido de verdad 🎉"}
   ],
   "esperarTitle": "Lo que viene ahora, claro.",
