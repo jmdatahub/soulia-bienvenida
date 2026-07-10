@@ -7,6 +7,21 @@
   "plan": "Formación interna del equipo en IA",
   "resultado": "→ Un equipo autónomo con la IA en su día a día",
   "planLead": "En el equipo hay quien ya se mueve con la IA y quien aún no la ha tocado. Con esto ponemos a todos en la misma línea de salida, y cada uno sale aplicándola a sus propias tareas, no a ejemplos de manual.",
+  "caminoTitle": "Cuatro pasos y nos vemos el 16.",
+  "caminoLead": "Ve a tu ritmo. Cada paso deja la formación más afinada para tu equipo.",
+  "pasos": [
+    { "t": "Bienvenida", "d": "Ya estás dentro. Este lo dejamos hecho ✨", "done": true },
+    { "t": "Los casos reales de cada departamento", "d": "Lo que cada equipo quiere quitarse de encima. Con eso afinamos el guión de la masterclass", "cta": "Enviárnoslos", "url": "https://wa.me/34676536353?text=Hola%20Jorge%2C%20te%20paso%20los%20casos%20reales%20que%20queremos%20trabajar%20en%20la%20masterclass%20del%2016", "msg": "¡Genial! Con eso afinamos el guión 🙌" },
+    { "t": "Nos vemos el 16 de julio", "d": "De 8:30 a 14:00 con todo el equipo, con un descanso para desayunar. Cada uno sale con un ejemplo de su área resuelto", "cta": "Anotado", "msg": "¡Nos vemos el 16! 🚀" },
+    { "t": "Jornadas por departamento", "d": "Formación, Comercial y Administración: 10 horas cada una, aplicadas a lo vuestro", "cta": "A por ello", "msg": "¡Eso es! El equipo entero con la IA a su servicio 🎉" }
+  ],
+  "esperarTitle": "Lo que viene, claro.",
+  "timeline": [
+    { "t": "Hoy", "d": "Echa un ojo a esto y ve juntando los casos reales que queráis traer a la masterclass." },
+    { "t": "16 de julio", "d": "Masterclass con todo el equipo, de 8:30 a 14:00. Vuestros problemas, resueltos en vivo." },
+    { "t": "Después de la masterclass", "d": "Jornadas de 10 horas por departamento: Formación, Comercial y Administración, cada una a lo suyo." },
+    { "icon": "★", "t": "Tu contacto directo", "d": "Jorge, a un mensaje. Para lo que necesites, cuando lo necesites." }
+  ],
   "giftTitle": "Tu auditoría exprés",
   "giftDesc": "Analizamos cómo trabajáis y te marcamos dónde se os van horas que la IA puede asumir, y cómo recuperarlas. Solicítala y te la preparamos sin coste.",
   "wa": "34676536353",

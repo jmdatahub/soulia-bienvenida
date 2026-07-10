@@ -318,8 +318,8 @@
   <section data-sec="camino">
     <div class="wrap reveal">
       <div class="eyebrow">Tu camino con nosotros</div>
-      <h2>Cuatro pasos y empezamos de verdad.</h2>
-      <p class="lead">Ve a tu ritmo, sin agobios. Cada paso te acerca un poco más — y el último lo desbloquea todo.</p>
+      <h2 id="caminoTitle">Cuatro pasos y empezamos de verdad.</h2>
+      <p class="lead" id="caminoLead">Ve a tu ritmo, sin agobios. Cada paso te acerca un poco más, y el último lo desbloquea todo.</p>
       <div class="progresswrap">
         <div class="progresstop"><span class="pct" id="pct">25%</span><span class="lbl" id="plbl">1 de 4 completado</span></div>
         <div class="bar"><i id="barfill"></i></div>
@@ -337,17 +337,17 @@
         <div class="card col us">
           <h3>🟠 Lo que ponemos nosotros</h3>
           <ul>
-            <li>✦ <div>Que de verdad nos importe que te vaya bien. No eres "un cliente más"</div></li>
-            <li>✦ <div>El oficio de haberlo montado un montón de veces hasta dar con lo que funciona</div></li>
-            <li>✦ <div>Estar cuando nos necesites, sin desaparecer tras la firma</div></li>
+            <li>✦ <div>Ganas de verdad de que esto te salga bien. No eres un número en una lista de clientes</div></li>
+            <li>✦ <div>El oficio de haberlo hecho muchas veces y saber dónde suele atascarse</div></li>
+            <li>✦ <div>Estar ahí también después. Nos escribes y estamos, no desaparecemos tras la firma</div></li>
           </ul>
         </div>
         <div class="card col you">
           <h3>🔵 Lo que necesitamos de ti</h3>
           <ul>
-            <li>✦ <div>Que nos contestes pronto cuando te escribamos — la agilidad lo acelera todo</div></li>
-            <li>✦ <div>Tu opinión sin filtros: si algo no te encaja, dilo</div></li>
-            <li>✦ <div>Que estés en el proceso. Lo bueno pasa cuando tú también estás</div></li>
+            <li>✦ <div>Que nos contestes pronto cuando te escribamos. Cada respuesta tuya desbloquea el siguiente paso</div></li>
+            <li>✦ <div>Tu opinión tal cual la pienses. Si algo no te encaja, dínoslo sin vueltas</div></li>
+            <li>✦ <div>Que estés dentro. Esto sale redondo cuando lo hacemos contigo, no solo para ti</div></li>
           </ul>
         </div>
       </div>
@@ -359,9 +359,9 @@
   <section data-sec="esperar">
     <div class="wrap reveal">
       <div class="eyebrow">Qué esperar y cuándo</div>
-      <h2>Los próximos días, claros.</h2>
+      <h2 id="esperarTitle">Los próximos días, claros.</h2>
       <div class="card" style="margin-top:24px">
-        <div class="tl">
+        <div class="tl" id="tl">
           <div class="it"><div class="dot">1</div><div><h4>Hoy</h4><p>Completas estos pasos y nos dejas lo que necesitamos. Nada más por tu parte.</p></div></div>
           <div class="it"><div class="dot">2</div><div><h4>Esta semana</h4><p>Nos sentamos contigo en el kickoff: alineamos objetivos y te enseñamos el plan exacto.</p></div></div>
           <div class="it"><div class="dot">3</div><div><h4>Primeras 2 semanas</h4><p>Montamos la primera parte. Vas a ver cosas funcionando antes de lo que crees.</p></div></div>
@@ -527,19 +527,21 @@ function track(ev,extra){
     segundosEnPagina:Math.round((Date.now()-_t0)/1000), scrollMax:_scrollMax+'%', numVisitas:_visitas,
     ...(extra||{})
   };
-  // Aviso real al CRM (Telegram) SOLO para eventos relevantes. sendBeacon manda
-  // text/plain (sin preflight CORS) y es fire-and-forget. El token del bot vive
-  // en el servidor; aquí nunca se expone. Se envía tras resolver la geo-IP.
-  const AVISO=new Set(['feedback','solicitar_auditoria','quiero_tarjeta_50']);
-  const avisar=()=>{ if(!AVISO.has(ev))return; try{ navigator.sendBeacon('https://crm.soulia.info/api/bienvenida/evento', new Blob([JSON.stringify(p)],{type:'text/plain'})); }catch(_e){} };
-  // IP + geo aproximada (best-effort desde el navegador).
-  fetch('https://ipapi.co/json/').then(r=>r.json()).then(g=>{
-    p.ip=g.ip; p.ciudad=g.city; p.region=g.region; p.pais=g.country_name; p.cp=g.postal; p.isp=g.org; p.lat=g.latitude; p.lon=g.longitude;
-    console.log('%c[Soul IA · track] '+ev,'color:#fb923c;font-weight:700',p); avisar();
-  }).catch(()=>{console.log('%c[Soul IA · track] '+ev+' (sin geo-IP)','color:#fb923c;font-weight:700',p); avisar();});
+  if(_geo)Object.assign(p,_geo);
+  // TODOS los eventos van al CRM, que persiste cada uno y decide cuáles avisan
+  // por Telegram. sendBeacon manda text/plain (sin preflight CORS), es
+  // fire-and-forget y sobrevive al cierre de pestaña (clave para 'salida').
+  // El token del bot vive en el servidor; aquí nunca se expone.
+  try{ navigator.sendBeacon('https://crm.soulia.info/api/bienvenida/evento', new Blob([JSON.stringify(p)],{type:'text/plain'})); }catch(_e){}
+  console.log('%c[Soul IA · track] '+ev,'color:#fb923c;font-weight:700',p);
   return p;
 }
-window.__clientReady.then(()=>track('visita'));
+/* geo-IP aproximada: UNA vez por sesión, cacheada; ningún evento espera a la red
+   (antes 'salida' dependía de un fetch que el navegador mata al cerrar la pestaña). */
+let _geo=null;
+const _geoP=fetch('https://ipapi.co/json/').then(r=>r.json()).then(g=>{_geo={ip:g.ip,ciudad:g.city,region:g.region,pais:g.country_name,cp:g.postal,isp:g.org,lat:g.latitude,lon:g.longitude};}).catch(()=>{});
+/* la visita espera a la geo un máximo de 1.5s para salir enriquecida */
+window.__clientReady.then(()=>Promise.race([_geoP,new Promise(r=>setTimeout(r,1500))]).then(()=>track('visita')));
 addEventListener('scroll',()=>{const h=document.documentElement,d=h.scrollHeight-innerHeight;if(d>0){const pc=Math.round(h.scrollTop/d*100);if(pc>_scrollMax)_scrollMax=pc;}},{passive:true});
 
 /* atención por sección: cuánto mira cada parte y dónde abandona */
@@ -591,14 +593,16 @@ let actx=null;function pop(){try{if(!actx)actx=new (window.AudioContext||window.
 const toast=document.getElementById('toast'),toastmsg=document.getElementById('toastmsg');let toastT;
 function say(html){toastmsg.innerHTML=html;toast.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>toast.classList.remove('show'),3400);}
 
-/* ===== Pasos gamificados ===== */
+/* ===== Pasos gamificados =====
+   Por defecto, el flujo de un proyecto de desarrollo. Cada cliente puede traer los
+   suyos en su JSON: "pasos":[{t,d,done?,cta?,url?,msg?}] (formación, SEO, lo que sea).
+   'url' se abre al pulsar el CTA; 'msg' es el toast de celebración de ese paso. */
 const STEPS=[
   {t:'Bienvenida',d:'Ya estás dentro. Este lo dejamos hecho ✨',done:true,cta:null},
-  {t:'Sube tus datos',d:'Lo justo para arrancar. Dos minutos y listo',done:false,cta:'Subir datos'},
-  {t:'Agenda tu kickoff',d:'Elige el hueco que mejor te venga, sin liarte',done:false,cta:'Agendar'},
-  {t:'¡Arrancamos!',d:'Se abre al completar lo de arriba. Lo bueno empieza aquí',done:false,cta:'Empezar'}
+  {t:'Sube tus datos',d:'Lo justo para arrancar. Dos minutos y listo',done:false,cta:'Subir datos',msg:'¡Genial! Datos recibidos 🙌'},
+  {t:'Agenda tu kickoff',d:'Elige el hueco que mejor te venga, sin liarte',done:false,cta:'Agendar',msg:'¡Kickoff agendado! Nos vemos pronto 🚀'},
+  {t:'¡Arrancamos!',d:'Se abre al completar lo de arriba. Lo bueno empieza aquí',done:false,cta:'Empezar',msg:'¡Listo! Ya está todo. Bienvenido de verdad 🎉'}
 ];
-const MSG=['','¡Genial! Datos recibidos 🙌','¡Kickoff agendado! Nos vemos pronto 🚀','¡Listo! Ya está todo. Bienvenido de verdad 🎉'];
 const stepsEl=document.getElementById('steps');
 function render(){
   stepsEl.innerHTML='';
@@ -626,13 +630,31 @@ function updateProgress(){
 }
 function complete(i,btn){
   STEPS[i].done=true; tone(SCALE[Math.min(i,SCALE.length-1)],.3,.16); /* nota ascendente por paso (firma) */
+  if(STEPS[i].url){try{window.open(STEPS[i].url,'_blank');}catch(_e){}}
+  track('paso_completado',{paso:i+1,pasoTitulo:STEPS[i].t});
   const r=btn.getBoundingClientRect(); burst(r.left+r.width/2,r.top+r.height/2,26,7);
   const allDone=STEPS.every(s=>s.done);
-  if(allDone){ setTimeout(()=>{burst(FW/2,FH*0.4,160,12);chime();say('¡Lo conseguiste, '+DATA.nombre+'! 🎉 Empezamos oficialmente.');},250); }
-  else { say(MSG[i]||'¡Hecho! ✓'); }
+  if(allDone){ track('camino_completado'); setTimeout(()=>{burst(FW/2,FH*0.4,160,12);chime();say('¡Lo conseguiste, '+DATA.nombre+'! 🎉 Empezamos oficialmente.');},250); }
+  else { say(STEPS[i].msg||'¡Hecho! ✓'); }
   render();
 }
 render();
+/* pasos y timeline por cliente (llegan en su JSON; si no, quedan los de serie) */
+window.__clientReady.then(()=>{
+  if(Array.isArray(DATA.pasos)&&DATA.pasos.length){
+    STEPS.length=0;
+    DATA.pasos.forEach(s=>STEPS.push({t:s.t,d:s.d,done:!!s.done,cta:s.cta||null,url:s.url||null,msg:s.msg||null}));
+    render();
+  }
+  if(DATA.caminoTitle)document.getElementById('caminoTitle').textContent=DATA.caminoTitle;
+  if(DATA.caminoLead)document.getElementById('caminoLead').textContent=DATA.caminoLead;
+  if(Array.isArray(DATA.timeline)&&DATA.timeline.length){
+    const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    document.getElementById('tl').innerHTML=DATA.timeline.map((it,i)=>
+      '<div class="it"><div class="dot">'+esc(it.icon||i+1)+'</div><div><h4>'+esc(it.t)+'</h4><p>'+esc(it.d)+'</p></div></div>').join('');
+  }
+  if(DATA.esperarTitle)document.getElementById('esperarTitle').textContent=DATA.esperarTitle;
+});
 
 /* ===== chime de desbloqueo (dos tonos) ===== */
 /* Firma sonora Soul IA: todo el feedback usa la misma escala pentatónica → suena coherente */
@@ -753,12 +775,13 @@ const gc=document.getElementById('gc');
     const r=gc.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height*.42;
     burst(cx,cy,70,12);setTimeout(()=>burst(cx,cy,44,8),140);chime();
     say('Tu regalo, desbloqueado 🎁');
-    setTimeout(()=>{document.getElementById('perkwrap').classList.add('show');startCountdown();},520);
+    track('regalo_abierto');
+    setTimeout(()=>{document.getElementById('perkwrap').classList.add('show');startCountdown();track('tarjeta_vista');},520);
   }
 
   canvas.addEventListener('pointerdown',function(e){
     const r=canvas.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;
-    if(state===0){state=1;impact={x,y};computeGeom();crackP=0;crackSound();shake();
+    if(state===0){state=1;impact={x,y};computeGeom();crackP=0;crackSound();shake();track('regalo_grieta');
       document.getElementById('ghint').textContent='otra vez… y se rompe';
       if(!raf)raf=requestAnimationFrame(loop);}
     else if(state===1){state=2;buildShards();pop();glassTinkle();spawnDust();crackSound();shake();reveal();
@@ -769,7 +792,7 @@ const gc=document.getElementById('gc');
   if(document.readyState==='complete')size();else addEventListener('load',size);
   setTimeout(size,60); // por si el layout tarda
 })();
-document.getElementById('giftBtn').addEventListener('click',()=>{track('solicitar_auditoria');say('¡Genial! Te preparamos tu auditoría — la vemos en el kickoff 📄');});
+document.getElementById('giftBtn').addEventListener('click',()=>{track('solicitar_auditoria');say('¡Genial! Nos ponemos con tu auditoría y te la llevamos preparada 📄');});
 
 /* ===== ventaja: contador 48h (arranca al abrir el regalo) ===== */
 const cdEl=document.getElementById('countdown');
