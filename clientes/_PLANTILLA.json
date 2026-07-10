@@ -4,6 +4,7 @@
   "cliente": "XX",
   "empresa": "Nombre de la empresa del cliente",
   "logo": "assets/clientes/<token>.png   (o null si no hay logo)",
+  "logoBg": "'dark' si el logo es blanco/claro (lo deja sobre fondo oscuro); omitir o cualquier otro valor = caja blanca",
   "plan": "Nombre del plan/oferta contratado",
   "resultado": "→ El resultado prometido en una frase",
   "planLead": "Frase de refuerzo (de qué le liberamos / qué gana). Tono voz-cliente.",

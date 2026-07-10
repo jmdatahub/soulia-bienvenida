@@ -3,6 +3,7 @@
   "cliente": "IC",
   "empresa": "Informa Consultores",
   "logo": "assets/clientes/informa-ia26.svg",
+  "logoBg": "dark",
   "plan": "Formación interna del equipo en IA",
   "resultado": "→ Un equipo autónomo con la IA en su día a día",
   "planLead": "En el equipo hay quien ya se mueve con la IA y quien aún no la ha tocado. Con esto ponemos a todos en la misma línea de salida, y cada uno sale aplicándola a sus propias tareas, no a ejemplos de manual.",
