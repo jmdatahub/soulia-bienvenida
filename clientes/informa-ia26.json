@@ -10,17 +10,54 @@
   "caminoTitle": "Cuatro pasos y nos vemos el 16.",
   "caminoLead": "Ve a tu ritmo. Cada paso deja la formación más afinada para tu equipo.",
   "pasos": [
-    { "t": "Bienvenida", "d": "Ya estás dentro. Este lo dejamos hecho ✨", "done": true },
-    { "t": "¿Algo que quieras que toquemos sí o sí?", "d": "Opcional: si hay un caso o una tarea de algún departamento que quieras ver resuelta en la masterclass, cuéntanoslo y lo metemos en el guión", "cta": "Añadir algo", "input": { "placeholder": "Un caso real, una tarea que se os come tiempo, una idea...", "send": "Enviárselo al equipo", "skip": "Lo dejo así" }, "msg": "¡Recibido! Lo metemos en el guión 💪" },
-    { "t": "Nos vemos el 16 de julio", "d": "De 8:30 a 14:00 con todo el equipo, con un descanso para desayunar. Cada uno sale con un ejemplo de su área resuelto", "cta": "Anotado", "msg": "¡Nos vemos el 16! 🚀" },
-    { "t": "Jornadas por departamento", "d": "Formación, Comercial y Administración: 10 horas cada una, aplicadas a lo vuestro", "cta": "A por ello", "msg": "¡Eso es! El equipo entero con la IA a su servicio 🎉" }
+    {
+      "t": "Bienvenida",
+      "d": "Ya estás dentro. Este lo dejamos hecho ✨",
+      "done": true
+    },
+    {
+      "t": "¿Algo que quieras que toquemos sí o sí?",
+      "d": "Opcional: si hay un caso o una tarea de algún departamento que quieras ver en la masterclass, cuéntanoslo y lo tendremos en cuenta al preparar la parte práctica",
+      "cta": "Añadir algo",
+      "input": {
+        "placeholder": "Un caso real, una tarea que se os come tiempo, una idea...",
+        "send": "Enviárselo al equipo",
+        "skip": "Lo dejo así"
+      },
+      "msg": "¡Recibido! Lo reviso para encajarlo en la práctica 💪"
+    },
+    {
+      "t": "Nos vemos el 16 de julio",
+      "d": "De 8:30 a 14:00 con todo el equipo, con un descanso para desayunar. Cada uno sale con un ejemplo de su área resuelto",
+      "cta": "Anotado",
+      "msg": "¡Nos vemos el 16! 🚀"
+    },
+    {
+      "t": "Jornadas por departamento",
+      "d": "Formación, Comercial y Administración: 10 horas cada una, aplicadas a lo vuestro",
+      "cta": "A por ello",
+      "msg": "¡Eso es! El equipo entero con la IA a su servicio 🎉"
+    }
   ],
   "esperarTitle": "Lo que viene, claro.",
   "timeline": [
-    { "t": "Lo primero", "d": "Echa un ojo a esto y, si quieres, déjanos arriba lo que haya que tocar sí o sí en la masterclass." },
-    { "t": "16 de julio", "d": "Masterclass con todo el equipo, de 8:30 a 14:00. Vuestros problemas, resueltos en vivo." },
-    { "t": "Después de la masterclass", "d": "Jornadas de 10 horas por departamento: Formación, Comercial y Administración, cada una a lo suyo." },
-    { "icon": "★", "t": "Tu contacto directo", "d": "Jorge, a un mensaje. Para lo que necesites, cuando lo necesites." }
+    {
+      "t": "Lo primero",
+      "d": "Echa un ojo a esto y, si quieres, déjanos arriba lo que haya que tocar sí o sí en la masterclass."
+    },
+    {
+      "t": "16 de julio",
+      "d": "Masterclass con todo el equipo, de 8:30 a 14:00. Vuestros problemas, resueltos en vivo."
+    },
+    {
+      "t": "Después de la masterclass",
+      "d": "Jornadas de 10 horas por departamento: Formación, Comercial y Administración, cada una a lo suyo."
+    },
+    {
+      "icon": "★",
+      "t": "Tu contacto directo",
+      "d": "Jorge, a un mensaje. Para lo que necesites, cuando lo necesites."
+    }
   ],
   "giftTitle": "Tu auditoría exprés",
   "giftDesc": "Analizamos cómo trabajáis y te marcamos dónde se os van horas que la IA puede asumir, y cómo recuperarlas. Solicítala y te la preparamos sin coste.",
