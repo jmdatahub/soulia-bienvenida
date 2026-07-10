@@ -1,0 +1,15 @@
+{
+  "nombre": "Ana",
+  "cliente": "IC",
+  "empresa": "Informa Consultores",
+  "logo": "assets/clientes/informa-ia26.svg",
+  "plan": "Formación interna del equipo en IA",
+  "resultado": "→ Un equipo autónomo con la IA en su día a día",
+  "planLead": "En el equipo hay quien ya se mueve con la IA y quien aún no la ha tocado. Con esto ponemos a todos en la misma línea de salida, y cada uno sale aplicándola a sus propias tareas, no a ejemplos de manual.",
+  "giftTitle": "Tu auditoría exprés",
+  "giftDesc": "Analizamos cómo trabajáis y te marcamos dónde se os van horas que la IA puede asumir, y cómo recuperarlas. Solicítala y te la preparamos sin coste.",
+  "wa": "34676536353",
+  "impactHead": "Hoy es el día que tu equipo<br>pasa de oír hablar de IA<br>a <span class=\"nm\">usarla de verdad</span>.",
+  "botName": "Nova",
+  "contactId": "1af991ec-637a-434d-978e-87945c9de711"
+}
