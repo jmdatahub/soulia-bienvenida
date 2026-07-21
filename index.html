@@ -128,6 +128,8 @@
   .gift-content .gd{font-size:14.5px;color:var(--muted);margin-top:12px;line-height:1.55;max-width:430px;margin-left:auto;margin-right:auto}
   .giftbtn{margin-top:18px;font-family:var(--font);font-weight:700;font-size:14px;color:#0a0a0f;background:linear-gradient(135deg,var(--orangeL),var(--orangeD));border:none;border-radius:12px;padding:13px 22px;cursor:pointer;box-shadow:0 0 22px rgba(249,115,22,.3);transition:transform .15s,box-shadow .2s}
   .giftbtn:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(249,115,22,.45)}
+  .giftbtn.done,.giftbtn:disabled{background:linear-gradient(135deg,#10b981,#059669);color:#fff;cursor:default;box-shadow:0 0 22px rgba(16,185,129,.28);transform:none}
+  .giftbtn.done:hover,.giftbtn:disabled:hover{transform:none;box-shadow:0 0 22px rgba(16,185,129,.28)}
   /* cristal (canvas) + pista */
   .gc .glass{position:absolute;inset:0;width:100%;height:100%;z-index:3;cursor:pointer;touch-action:manipulation}
   .gc.shattered .glass{pointer-events:none}
@@ -544,7 +546,9 @@ function track(ev,extra){
   // por Telegram. sendBeacon manda text/plain (sin preflight CORS), es
   // fire-and-forget y sobrevive al cierre de pestaña (clave para 'salida').
   // El token del bot vive en el servidor; aquí nunca se expone.
-  try{ navigator.sendBeacon('https://crm.soulia.info/api/bienvenida/evento', new Blob([JSON.stringify(p)],{type:'text/plain'})); }catch(_e){}
+  let _q=false;
+  try{ _q=navigator.sendBeacon('https://crm.soulia.info/api/bienvenida/evento', new Blob([JSON.stringify(p)],{type:'text/plain'}))!==false; }catch(_e){ _q=false; }
+  p._enviado=_q; // el navegador encoló el beacon (no garantiza entrega, pero sí que salió)
   console.log('%c[Soul IA · track] '+ev,'color:#fb923c;font-weight:700',p);
   return p;
 }
@@ -623,6 +627,11 @@ const stepsEl=document.getElementById('steps');
 /* persistencia por cliente: los pasos hechos y el contador sobreviven a recargas
    (que el cliente vuelva y su progreso siga ahí; auditoría UX 2026-07-10) */
 const _tok=new URLSearchParams(location.search).get('c')||'demo';
+/* Señales calientes (auditoría, tarjeta): se avisan UNA vez por cliente. Persistido
+   en localStorage por token → ni re-clics ni recargas repiten el aviso al CRM. El
+   servidor deduplica también como red de seguridad. */
+function _hotSent(ev){try{return localStorage.getItem('soulia_hot_'+_tok+'_'+ev)==='1';}catch(e){return false;}}
+function _markHot(ev){try{localStorage.setItem('soulia_hot_'+_tok+'_'+ev,'1');}catch(e){}}
 function saveSteps(){try{localStorage.setItem('soulia_steps_'+_tok,JSON.stringify(STEPS.map(s=>!!s.done)));}catch(e){}}
 function restoreSteps(){try{const v=JSON.parse(localStorage.getItem('soulia_steps_'+_tok)||'null');if(Array.isArray(v)&&v.length===STEPS.length)v.forEach((d,i)=>{if(d)STEPS[i].done=true;});}catch(e){}}
 const escS=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -824,7 +833,19 @@ const gc=document.getElementById('gc');
   if(document.readyState==='complete')size();else addEventListener('load',size);
   setTimeout(size,60); // por si el layout tarda
 })();
-document.getElementById('giftBtn').addEventListener('click',()=>{track('solicitar_auditoria');say('¡Genial! Nos ponemos con tu auditoría y te la llevamos preparada 📄');});
+(function(){
+  const gb=document.getElementById('giftBtn');
+  const marcarPedida=()=>{gb.disabled=true;gb.classList.add('done');gb.textContent='✅ Auditoría solicitada';gb.style.transform='';};
+  if(_hotSent('solicitar_auditoria'))marcarPedida(); // si ya la pidió (otra visita), el botón vuelve confirmado
+  gb.addEventListener('click',()=>{
+    if(_hotSent('solicitar_auditoria'))return; // idempotente: un solo aviso al CRM
+    const r=track('solicitar_auditoria');
+    if(r&&r._enviado===false)return; // el navegador no pudo encolar el aviso: deja reintentar
+    _markHot('solicitar_auditoria');
+    marcarPedida();
+    say('¡Genial! Nos ponemos con tu auditoría y te la llevamos preparada 📄');
+  });
+})();
 
 /* ===== ventaja: contador 48h (arranca al abrir el regalo) ===== */
 const cdEl=document.getElementById('countdown');
@@ -842,9 +863,9 @@ function startCountdown(){if(cdTimer)return;
 /* ===== "La quiero al 50%" → WhatsApp con mensaje predeterminado ===== */
 document.getElementById('perkBtn').addEventListener('click',function(){
   const r=this.getBoundingClientRect();burst(r.left+r.width/2,r.top,30,7);pop();
-  track('quiero_tarjeta_50');
+  if(!_hotSent('quiero_tarjeta_50')){const tr=track('quiero_tarjeta_50');if(!(tr&&tr._enviado===false))_markHot('quiero_tarjeta_50');} // aviso una sola vez (si se encoló)
   const msg=encodeURIComponent('Hola Jorge, quiero aprovechar para tener mi tarjeta de visita virtual al 50% antes de que se me acabe el tiempo. ¿Me la reservas?');
-  window.open('https://wa.me/'+DATA.wa+'?text='+msg,'_blank');
+  window.open('https://wa.me/'+DATA.wa+'?text='+msg,'_blank'); // WhatsApp se puede reabrir siempre
 });
 /* "Quiero ver un ejemplo" es un enlace directo a la tarjeta de Jorge (jorgemarin.soulia.info/qr.html) */
 
